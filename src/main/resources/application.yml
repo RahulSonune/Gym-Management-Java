@@ -1,0 +1,79 @@
+spring:
+  application:
+    name: gym-management-api
+  # Load repo-root application-local.yml (gitignored). Without this, that file is ignored unless you use profile "local".
+  config:
+    import: optional:file:./application-local.yml
+  datasource:
+    url: jdbc:mysql://localhost:3306/gym_management?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Kolkata&characterEncoding=UTF-8
+    username: root
+    password: root
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      pool-name: GymHikariPool
+      maximum-pool-size: 10
+      minimum-idle: 2
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 1800000
+      connection-test-query: SELECT 1
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+        jdbc:
+          time_zone: Asia/Kolkata
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    baseline-on-migrate: true
+    baseline-version: 2
+    validate-on-migrate: false
+
+server:
+  port: 8080
+  servlet:
+    context-path: /
+
+app:
+  # Member PII is encrypted in the browser (FLENC1: AES-GCM). API stores ciphertext as-is.
+  # branchId, status, IDs, and amounts stay plain JSON. Search/lookup on encrypted fields are client-side.
+  pii:
+    storage-mode: client-encrypted-opaque
+    client-storage-secret: fitlife-dev-client-storage-secret-change-for-prod-min-32
+  jwt:
+    secret: change-this-to-a-long-random-secret-at-least-256-bits-for-production
+    access-token-expiration-ms: 3600000
+    refresh-token-expiration-ms: 604800000
+  cors:
+    # Allows Angular on any local port (4200, 7777, etc.)
+    allowed-origin-patterns:
+      - http://localhost:*
+      - http://127.0.0.1:*
+  razorpay:
+    # Keys: https://dashboard.razorpay.com → API Keys (use Test keys for dev).
+    # Payment APIs stay off until both keys are non-empty (see RazorpayService#isConfigured).
+    # Windows (session):  $env:RAZORPAY_KEY_ID="rzp_test_..."; $env:RAZORPAY_KEY_SECRET="..."
+    # Or put values in application-local.yml (do not commit real secrets).
+    enabled: true
+    key-id: ${RAZORPAY_KEY_ID:}
+    key-secret: ${RAZORPAY_KEY_SECRET:}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: when_authorized
+
+logging:
+  level:
+    com.fitlife.gym: INFO
+    org.hibernate.SQL: WARN
+    com.zaxxer.hikari: INFO

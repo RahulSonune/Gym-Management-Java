@@ -1,0 +1,14 @@
+# Copy to PROJECT ROOT as application-local.yml (same folder as pom.xml — NOT under src/main/resources).
+# Loaded via spring.config.import in application.yml. Gitignored — do not commit secrets.
+
+spring:
+  datasource:
+    username: root
+    password: YOUR_MYSQL_PASSWORD_HERE
+
+# Razorpay (optional): https://dashboard.razorpay.com — Test keys for local dev.
+# app:
+#   razorpay:
+#     enabled: true
+#     key-id: rzp_test_XXXXXXXXXXXXXXXX
+#     key-secret: YOUR_SECRET

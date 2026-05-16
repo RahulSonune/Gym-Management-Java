@@ -1,0 +1,3 @@
+ALTER TABLE app_user
+    MODIFY email VARCHAR(512) NOT NULL,
+    MODIFY password_hash VARCHAR(512) NOT NULL;
