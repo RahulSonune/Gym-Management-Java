@@ -1,6 +1,6 @@
 services:
   - type: web
     name: gym-management-backend
-    env: java
+    runtime: java
     buildCommand: chmod +x mvnw && ./mvnw clean package
     startCommand: java -jar target/*.jar
